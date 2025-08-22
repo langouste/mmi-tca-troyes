@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'thomas-ca/projets/tp_ascii-avatar-factory/**'
+        #paths:
+        #- 'thomas-ca/projets/tp_ascii-avatar-factory/**'
 
 jobs:
   # Build job
@@ -39,7 +39,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'  # ou le dossier de votre build
+          path: 'thomas-ca/projets/tp_ascii-avatar-factory/dist'  # ou le dossier de votre build
 
   # Deploy job
   deploy:
