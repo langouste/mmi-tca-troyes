@@ -1,9 +1,5 @@
 ---
-import MainLayout from '../layouts/mainlayout.astro';
-import Sidebar from '../components/sidebar.astro';
-import MainContent from '../components/maincontent.astro';
+const defaultLevel = 's5';
 ---
-<MainLayout>
-    <Sidebar slot="sidebar" />
-    <MainContent slot="maincontent" />
-</MainLayout>
+
+<meta http-equiv="refresh" content={`0;url=/${defaultLevel}`} />
