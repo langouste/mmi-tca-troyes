@@ -1,0 +1,28 @@
+---
+// Le code JavaScript pour la gestion des clics
+const js = `
+document.addEventListener('DOMContentLoaded', () => {
+    const iframe = document.getElementById('content-iframe');
+    const links = document.querySelectorAll('[data-url]');
+
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = e.target.closest('a').getAttribute('data-url');
+            iframe.src = url;
+            // Ouvrir dans un nouvel onglet
+            const externalLink = e.target.closest('a').querySelector('svg');
+            if (externalLink) {
+                externalLink.parentElement.href = url;
+                externalLink.parentElement.target = "_blank";
+            }
+        });
+    });
+});
+`;
+---
+<div class="h-full w-full">
+    <iframe id="content-iframe" src="" class="w-full h-full border-none"></iframe>
+</div>
+
+<script>{js}</script>

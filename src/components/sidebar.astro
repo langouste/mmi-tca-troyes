@@ -1,0 +1,104 @@
+---
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const focusUser = import.meta.env.FOCUS_USER || 'prof';
+const showAllUsers = import.meta.env.SHOW_ALL_USER === 'true';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const studentsPath = path.join(__dirname, '../../étudiants');
+const studentsDirs = await fs.readdir(studentsPath, { withFileTypes: true })
+    .then(files => files.filter(f => f.isDirectory()).map(f => f.name))
+    .catch(() => []);
+
+const userResources = async (user) => {
+    const userPath = path.join(studentsPath, user);
+    const resources = {};
+    for (const type of ['cours', 'tps', 'projets']) {
+        const typePath = path.join(userPath, type);
+        resources[type] = await fs.readdir(typePath, { withFileTypes: true })
+            .then(files => files.filter(f => f.isDirectory()).map(f => f.name))
+            .catch(() => []);
+    }
+    return resources;
+};
+
+const focusedUserResources = await userResources(focusUser);
+const otherUsers = studentsDirs.filter(user => user !== focusUser);
+
+const allOtherResources = showAllUsers
+    ? await Promise.all(
+        otherUsers.map(async (user) => ({
+            user,
+            resources: await userResources(user)
+        }))
+    )
+    : [];
+---
+
+<div class="p-6">
+    <h1 class="text-xl font-bold mb-4">Ressources principales</h1>
+    <nav>
+        <ul>
+            {Object.keys(focusedUserResources).map(type => (
+                <>
+                    <li class="font-bold my-2 text-gray-700">{type.toUpperCase()}</li>
+                    <ul>
+                        {focusedUserResources[type].map(resource => (
+                            <li class="pl-4 my-1">
+                                <a href="#" data-url={`/étudiants/${focusUser}/${type}/${resource}`} class="text-blue-600 hover:underline flex items-center">
+                                    {resource}
+                                    <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-6-4h4m-4-4v4m0 0l-5 5" />
+                                    </svg>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ))}
+        </ul>
+    </nav>
+    {showAllUsers && (
+        <>
+            <h2 class="text-lg font-bold mt-8 mb-4">Ressources partagées</h2>
+            <ul>
+            {allOtherResources.map(({ user, resources }) => {
+                const hasResources = Object.values(resources).some(list => list.length > 0);
+                
+                return (
+                    <li key={user}>
+                        <div class="font-bold my-2 text-gray-700">{user.toUpperCase().split('-').join(' ')}.</div>
+                        {hasResources && (
+                            <ul>
+                                {Object.entries(resources).map(([type, resourcesList]) => (
+                                    resourcesList.length > 0 && (
+                                        // Map sur chaque ressource de la liste
+                                        resourcesList.map(resource => (
+                                            <li key={`${type}-${resource}`} class="pl-4 my-1">
+                                                <a 
+                                                    href="#" 
+                                                    data-url={`/étudiants/${user}/${type}/${resource}`} 
+                                                    class="text-blue-600 hover:underline flex items-center"
+                                                >
+                                                    {resource}
+                                                    <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-6-4h4m-4-4v4m0 0l-5 5" />
+                                                    </svg>
+                                                </a>
+                                            </li>
+                                        ))
+                                    )
+                                ))}
+                            </ul>
+                        )}
+                    </li>
+                );
+            })}
+            </ul>
+        </>
+    )}
+</div>
