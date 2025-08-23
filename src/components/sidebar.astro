@@ -3,13 +3,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const focusUser = import.meta.env.FOCUS_USER || 'prof';
-const showAllUsers = import.meta.env.SHOW_ALL_USER === 'true';
+const focusUser = import.meta.env.FOCUS_USER || 'thomas-ca';
+const showAllUsers = import.meta.env.SHOW_ALL_USERS === 'true';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const studentsPath = path.join(__dirname, '../../étudiants');
+const studentsPath = path.join(__dirname, '../../ressources');
 const studentsDirs = await fs.readdir(studentsPath, { withFileTypes: true })
     .then(files => files.filter(f => f.isDirectory()).map(f => f.name))
     .catch(() => []);
@@ -49,7 +49,7 @@ const allOtherResources = showAllUsers
                     <ul>
                         {focusedUserResources[type].map(resource => (
                             <li class="pl-4 my-1">
-                                <a href="#" data-url={`/étudiants/${focusUser}/${type}/${resource}`} class="text-blue-600 hover:underline flex items-center">
+                                <a href="#" data-url={`/ressources/${focusUser}/${type}/${resource}`} class="text-blue-600 hover:underline flex items-center">
                                     {resource}
                                     <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-6-4h4m-4-4v4m0 0l-5 5" />
@@ -81,7 +81,7 @@ const allOtherResources = showAllUsers
                                             <li key={`${type}-${resource}`} class="pl-4 my-1">
                                                 <a 
                                                     href="#" 
-                                                    data-url={`/étudiants/${user}/${type}/${resource}`} 
+                                                    data-url={`/ressources/${user}/${type}/${resource}`} 
                                                     class="text-blue-600 hover:underline flex items-center"
                                                 >
                                                     {resource}
