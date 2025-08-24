@@ -16,35 +16,41 @@ permissions:
   id-token: write
  
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build site with specific user
-        run: npm run build
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
         env:
           SHOW_ALL_USER: ${{ vars.SHOW_ALL_USER }}
 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+
+      # Téléchargement des tous les artifacts précédents
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: ./dist
 
+      # Upload d'un artefact unifié
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: monorepo-site
           path: dist/
           retention-days: 1
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
