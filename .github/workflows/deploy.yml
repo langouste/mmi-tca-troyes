@@ -14,20 +14,18 @@ permissions:
   contents: read
   pages: write
   id-token: write
- 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         env:
-          SHOW_ALL_USER: ${{ vars.SHOW_ALL_USER }}
-
+          SHOW_ALL_USERS: ${{ vars.SHOW_ALL_USERS }}
 
   deploy:
     needs: build
@@ -36,7 +34,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-
       # Téléchargement des tous les artifacts précédents
       - name: Download artifacts
         uses: actions/download-artifact@v4
