@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const appBaseUrl = import.meta.env.PUBLIC_APP_URL;
 
 export default function AuthButtons() {
   const [user, setUser] = useState<any>(null);
@@ -29,9 +29,7 @@ export default function AuthButtons() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo:
-          supabaseUrl +
-          "/mmi-tca-troyes/s5/thomas-ca/projets/svg-avatar-factory/",
+        redirectTo: appBaseUrl,
       },
     });
   }
